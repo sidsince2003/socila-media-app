@@ -116,29 +116,86 @@
                     <li class="nav-item"><a class="nav-link" href="/profile/{{ profile.user }}"><i class="fa-solid fa-user"></i> Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="/lobby"><i class="fa-solid fa-video"></i> Lobby</a></li>
                     <li class="nav-item"><a class="nav-link" href="/News"><i class="fa-solid fa-newspaper"></i> News</a></li>
+                    <li class="nav-item">
+  <a class="nav-link" href="/messages/">
+    <i class="fa-solid fa-envelope"></i> Messages
+  </a>
+</li>
                     <li class="nav-item"><a class="nav-link" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
                 </ul>
             </nav>
 
             <!-- Main Content -->
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 offset-md-2">
-                {% include "modal.html" %}
-                {% include "search.html" %}
+    {% include "modal.html" %}
+    {% include "search.html" %}
 
-                <div class="container text-center" style="padding: 10px; margin-top: 20px;">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                        {% for pos in posts %}
-                        <div class="col image_s mb-4">
-                            <img class="image__img" src="{{ pos.image.url }}" alt="Post Image">
-                            <div class="image__overlay">
-                                <div class="image__title"><a href="/profile/{{ pos.user }}">@{{ pos.user }}</a></div>
-                                <div class="image__description">{{ pos.caption }}</div>
-                            </div>
-                        </div>
-                        {% endfor %}
+    <div class="container" style="margin-top: 20px; max-width: 600px;">
+        {% for pos in posts %}
+        <div class="card mb-4 shadow-sm">
+            <!-- Post Header -->
+            <div class="card-header bg-white d-flex align-items-center">
+                <img src="{{ pos.user.profile.profileimg.url }}" class="rounded-circle me-2" width="40" height="40" alt="Profile Image">
+                <a href="/profile/{{ pos.user }}" class="fw-bold text-dark text-decoration-none">@{{ pos.user }}</a>
+            </div>
+
+            <!-- Post Image -->
+            <img src="{{ pos.image.url }}" class="card-img-top" alt="Post Image" style="object-fit: cover; max-height: 500px;">
+
+            <!-- Post Body -->
+            <div class="card-body">
+                <p class="card-text">{{ pos.caption }}</p>
+
+                <!-- Like & Comment Buttons -->
+                <div class="d-flex align-items-center justify-content-between mt-2">
+                    <div>
+                        <form method="POST" action="/like-post/{{ pos.id }}/">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fa fa-heart"></i> Like
+                            </button>
+                        </form>
+                    </div>
+                    <div>
+                        <a href="#comment-form-{{ pos.id }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fa fa-comment"></i> Comment
+                        </a>
                     </div>
                 </div>
-            </main>
+
+                <!-- Like count -->
+                <small class="text-muted d-block mt-2">
+                    {{ pos.no_of_likes }} like{{ pos.no_of_likes|pluralize }}
+                </small>
+
+                <!-- Comment List -->
+                <div class="mt-3">
+                    {% for comment in pos.comments.all %}
+                        <div class="border rounded p-2 mb-2 bg-light">
+                            <strong>{{ comment.user.username }}</strong>: {{ comment.comment_text }}
+                            <br>
+                            <small class="text-muted">{{ comment.created_at }}</small>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">No comments yet.</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Comment Form -->
+                <form id="comment-form-{{ pos.id }}" class="mt-3" method="POST" action="/comment/{{ pos.id }}/">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" name="comment_text" class="form-control" placeholder="Add a comment..." required>
+                        <button type="submit" class="btn btn-primary">Post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+
+
 
         </div>
     </div>

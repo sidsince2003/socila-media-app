@@ -1,30 +1,150 @@
 {% load static %}
 
+<!-- Create Post Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-2xl shadow-2xl overflow-hidden">
       <form action="{% url 'upload' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">New Post</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        
+        <!-- Modal Header -->
+        <div class="modal-header bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0 py-4">
+          <h5 class="modal-title font-bold text-xl flex items-center" id="exampleModalLabel">
+            <i class="fa-solid fa-plus-circle mr-3 text-2xl"></i>
+            Create New Post
+          </h5>
+          <button type="button" class="btn-close btn-close-white opacity-75 hover:opacity-100" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <img src="{% static 'css/upload.png' %}" alt="Upload Icon" class="m-1 mb-3">
-          <div class="mb-3">
-            <label for="image_upload" class="form-label">Photo</label>
-            <input type="file" class="form-control" name="image_upload" id="image_upload" required>
+        
+        <!-- Modal Body -->
+        <div class="modal-body p-6 bg-gray-50">
+          <!-- Upload Icon -->
+          <div class="text-center mb-6">
+            <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <img src="{% static 'css/upload.png' %}" alt="Upload Icon" class="w-10 h-10 opacity-60">
+            </div>
+            <p class="text-gray-600 text-sm">Share your moment with the world</p>
           </div>
-          <div class="mb-3">
-            <label for="caption" class="form-label">Caption</label>
-            <textarea class="form-control" name="caption" id="caption" placeholder="Write your caption..." required></textarea>
+
+          <!-- Photo Upload -->
+          <div class="mb-6">
+            <label for="image_upload" class="block text-sm font-semibold text-gray-700 mb-3">
+              <i class="fa-solid fa-image mr-2 text-blue-600"></i>
+              Choose Photo
+            </label>
+            <div class="relative">
+              <input type="file" 
+                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:transition-all file:duration-200 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                     name="image_upload" 
+                     id="image_upload" 
+                     accept="image/*"
+                     required>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">
+              <i class="fa-solid fa-info-circle mr-1"></i>
+              Supported formats: JPG, PNG, GIF (Max 10MB)
+            </p>
+          </div>
+
+          <!-- Caption -->
+          <div class="mb-4">
+            <label for="caption" class="block text-sm font-semibold text-gray-700 mb-3">
+              <i class="fa-solid fa-pen mr-2 text-blue-600"></i>
+              Caption
+            </label>
+            <textarea class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200" 
+                      name="caption" 
+                      id="caption" 
+                      rows="4"
+                      placeholder="Write a caption... What's on your mind?" 
+                      required></textarea>
+            <div class="flex justify-between items-center mt-2">
+              <p class="text-xs text-gray-500">
+                <i class="fa-solid fa-hashtag mr-1"></i>
+                Add hashtags to reach more people
+              </p>
+              <span class="text-xs text-gray-400" id="caption-counter">0/500</span>
+            </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Create Post</button>
+        
+        <!-- Modal Footer -->
+        <div class="modal-footer border-0 p-6 pt-0 bg-gray-50">
+          <div class="flex space-x-3 w-full">
+            <button type="button" 
+                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200" 
+                    data-bs-dismiss="modal">
+              <i class="fa-solid fa-times mr-2"></i>
+              Cancel
+            </button>
+            <button type="submit" 
+                    class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105">
+              <i class="fa-solid fa-share mr-2"></i>
+              Share Post
+            </button>
+          </div>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<script>
+// Character counter for caption
+document.addEventListener('DOMContentLoaded', function() {
+  const captionTextarea = document.getElementById('caption');
+  const captionCounter = document.getElementById('caption-counter');
+  
+  if (captionTextarea && captionCounter) {
+    captionTextarea.addEventListener('input', function() {
+      const currentLength = this.value.length;
+      const maxLength = 500;
+      
+      captionCounter.textContent = `${currentLength}/${maxLength}`;
+      
+      if (currentLength > maxLength * 0.9) {
+        captionCounter.classList.add('text-red-500');
+        captionCounter.classList.remove('text-gray-400');
+      } else {
+        captionCounter.classList.remove('text-red-500');
+        captionCounter.classList.add('text-gray-400');
+      }
+    });
+  }
+
+  // Preview image on selection
+  const imageUpload = document.getElementById('image_upload');
+  if (imageUpload) {
+    imageUpload.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          // Create or update image preview
+          let preview = document.getElementById('image-preview');
+          if (!preview) {
+            preview = document.createElement('div');
+            preview.id = 'image-preview';
+            preview.className = 'mt-4 text-center';
+            imageUpload.parentNode.appendChild(preview);
+          }
+          
+          preview.innerHTML = `
+            <div class="relative inline-block">
+              <img src="${e.target.result}" alt="Preview" class="max-w-full h-40 object-cover rounded-xl shadow-md">
+              <div class="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
+                <i class="fa-solid fa-check text-xs"></i>
+              </div>
+            </div>
+            <p class="text-sm text-green-600 mt-2">
+              <i class="fa-solid fa-check-circle mr-1"></i>
+              Image selected successfully
+            </p>
+          `;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+});
+</script>

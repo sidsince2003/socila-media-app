@@ -1,5 +1,3 @@
-
-
 {% load static %}
 
 <!DOCTYPE html>
@@ -8,95 +6,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://kit.fontawesome.com/cb792c0850.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
     <title>Search Results for "{{ query }}"</title>
-    <link rel="stylesheet" href="{% static 'css/app.css' %}">
-    <style>
-        /* Custom styles for search results */
-        .container {
-            margin-top: 20px;
-        }
-
-        .table {
-            width: 100%;
-            margin-bottom: 1rem;
-            color: #212529;
-        }
-
-        .table th,
-        .table td {
-            padding: 1rem;
-            vertical-align: top;
-            border-top: 1px solid #dee2e6;
-        }
-
-        .table thead th {
-            vertical-align: bottom;
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .table tbody + tbody {
-            border-top: 2px solid #dee2e6;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        h2 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        h1, h2 {
-            color: #333;
-        }
-
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/cb792c0850.js" crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body class="bg-gray-50 min-h-screen">
 
-    <div class="container">
-        <h1>Search Results for "{{ query }}"</h1>
-        <div class="container">
-            <h2>User Profiles</h2>
-            
-            <table class="table">
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td><h1><strong><a href="/profile/{{user.user.username}}">@{{user.user.username}}</a></strong></h1></td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td>No users found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-blue-600 hover:text-blue-700 transition-colors">
+                        <i class="fa-solid fa-arrow-left text-xl"></i>
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-800">Search Results</h1>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="relative max-w-md">
+                    <input type="text" 
+                           placeholder="Search again..." 
+                           value="{{ query }}"
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fa-solid fa-search text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        
+        <!-- Search Query Display -->
+        <div class="mb-8">
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-search text-blue-600 mr-3"></i>
+                    <div>
+                        <h2 class="text-lg font-semibold text-blue-800">
+                            Search results for: "<span class="font-bold">{{ query }}</span>"
+                        </h2>
+                        <p class="text-blue-600 text-sm mt-1">
+                            Found {{ users|length }} user{{ users|length|pluralize }} matching your search
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            
+            <!-- Section Header -->
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+                        <i class="fa-solid fa-users mr-3 text-blue-600"></i>
+                        User Profiles
+                    </h3>
+                    <span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
+                        {{ users|length }} result{{ users|length|pluralize }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- User Results -->
+            <div class="divide-y divide-gray-100">
+                {% for user in users %}
+                <div class="p-6 hover:bg-gray-50 transition-all duration-200 group">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <!-- User Avatar -->
+                            <div class="relative">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-md group-hover:scale-105 transition-transform duration-200">
+                                    {{ user.user.username|slice:":1"|upper }}
+                                </div>
+                                <!-- Online Status -->
+                                <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 border-2 border-white rounded-full"></div>
+                            </div>
+                            
+                            <!-- User Info -->
+                            <div class="flex-1">
+                                <h4 class="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
+                                    <a href="/profile/{{user.user.username}}" class="flex items-center">
+                                        @{{user.user.username}}
+                                        <i class="fa-solid fa-external-link-alt ml-2 text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                    </a>
+                                </h4>
+                                <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
+                                    <span class="flex items-center">
+                                        <i class="fa-solid fa-images mr-1"></i>
+                                        12 posts
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fa-solid fa-users mr-1"></i>
+                                        245 followers
+                                    </span>
+                                    {% if user.location %}
+                                    <span class="flex items-center">
+                                        <i class="fa-solid fa-location-dot mr-1"></i>
+                                        {{ user.location }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                {% if user.bio %}
+                                <p class="text-gray-600 mt-2 text-sm line-clamp-2">{{ user.bio }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex items-center space-x-3">
+                            <a href="/profile/{{user.user.username}}" 
+                               class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-all duration-200 transform hover:scale-105">
+                                <i class="fa-solid fa-user mr-2"></i>
+                                View Profile
+                            </a>
+                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-4 py-2 rounded-lg transition-colors">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <!-- Empty State -->
+                <div class="text-center py-16 px-6">
+                    <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-search text-2xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-600 mb-3">No users found</h3>
+                    <p class="text-gray-500 mb-6 max-w-md mx-auto">
+                        We couldn't find any users matching "<span class="font-semibold">{{ query }}</span>". 
+                        Try adjusting your search terms or exploring different keywords.
+                    </p>
+                    
+                    <!-- Suggestions -->
+                    <div class="bg-gray-50 rounded-xl p-6 max-w-md mx-auto">
+                        <h4 class="font-semibold text-gray-700 mb-3">Search Tips:</h4>
+                        <ul class="text-sm text-gray-600 space-y-2 text-left">
+                            <li class="flex items-center">
+                                <i class="fa-solid fa-check text-green-500 mr-2"></i>
+                                Try different keywords or variations
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fa-solid fa-check text-green-500 mr-2"></i>
+                                Check for typos in your search
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fa-solid fa-check text-green-500 mr-2"></i>
+                                Use shorter, more general terms
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Related Actions -->
+        {% if users %}
+        <div class="mt-8 text-center">
+            <div class="bg-white rounded-xl p-6 shadow-md">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Explore More</h3>
+                <div class="flex items-center justify-center space-x-4">
+                    <a href="/explore" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors font-medium">
+                        <i class="fa-solid fa-compass mr-2"></i>
+                        Discover More Users
+                    </a>
+                    <a href="/" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-lg transition-colors font-medium">
+                        <i class="fa-solid fa-home mr-2"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
 
     <script src="{% static 'js/app.js'%}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+
+    <script>
+        // Real-time search functionality
+        const searchInput = document.querySelector('input[placeholder="Search again..."]');
+        
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        window.location.href = `/search/?q=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+        }
+
+        // Highlight search terms
+        function highlightSearchTerms() {
+            const query = "{{ query }}".toLowerCase();
+            const usernames = document.querySelectorAll('h4 a');
+            
+            usernames.forEach(username => {
+                const text = username.textContent;
+                if (text.toLowerCase().includes(query)) {
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    username.innerHTML = text.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>');
+                }
+            });
+        }
+
+        // Run highlighting when page loads
+        document.addEventListener('DOMContentLoaded', highlightSearchTerms);
+    </script>
 </body>
 
 </html>
-
-               

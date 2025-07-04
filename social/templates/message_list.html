@@ -1,0 +1,285 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Messages | Start Chat</title>
+  <script src="https://kit.fontawesome.com/cb792c0850.js" crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #ebf8ff, #e0e7ff);
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .wrapper {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .icon-box {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(to bottom right, #2563eb, #4f46e5);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      margin: 0 auto 1rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .title {
+      font-size: 2rem;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #4b5563;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+    }
+
+    .search-box {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      background-color: #f9fafb;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+    }
+
+    .user-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .user-item {
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    .user-item:hover {
+      background: #eff6ff;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom right, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      font-size: 1.25rem;
+      position: relative;
+    }
+
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      background: #10b981;
+      border: 2px solid white;
+      border-radius: 50%;
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+    }
+
+    .username {
+      font-size: 1.1rem;
+      color: #1f2937;
+      font-weight: 600;
+    }
+
+    .active {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .message-btn {
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .message-btn:hover {
+      background: #1d4ed8;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .message-btn i {
+      margin-right: 6px;
+    }
+
+    .footer {
+      padding: 1rem 1.5rem;
+      background: #f9fafb;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+
+    .quick-links {
+      margin-top: 2rem;
+      text-align: center;
+      color: #4b5563;
+      font-size: 0.95rem;
+    }
+
+    .quick-links a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #374151;
+      transition: color 0.3s ease;
+    }
+
+    .quick-links a:hover {
+      color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="wrapper">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="icon-box">
+        <i class="fa-solid fa-comments"></i>
+      </div>
+      <h1 class="title">Start a Conversation</h1>
+      <p class="subtitle">Connect with amazing people in your network</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+      <div class="search-box">
+        <input type="text" placeholder="Search users..." class="search-input" id="searchInput">
+        <i class="fa-solid fa-search search-icon"></i>
+      </div>
+
+      <div class="user-list" id="userList">
+        {% for user in users %}
+        <div class="user-item user-block">
+          <div class="user-info">
+            <div class="avatar">
+              {{ user.username|slice:":1"|upper }}
+              <div class="status-dot"></div>
+            </div>
+            <div>
+              <div class="username">{{ user.username }}</div>
+              <div class="active">Active now</div>
+            </div>
+          </div>
+          <a href="{% url 'chat_view' user.username %}" class="message-btn">
+            <i class="fa-solid fa-paper-plane"></i> Message
+          </a>
+        </div>
+        {% empty %}
+        <div style="text-align:center; padding: 2rem;">
+          <div style="margin-bottom: 1rem;">
+            <i class="fa-solid fa-user-friends" style="font-size: 2rem; color: #9ca3af;"></i>
+          </div>
+          <h3 style="font-size: 1.25rem; color: #6b7280;">No users available</h3>
+          <p style="color: #9ca3af;">Check back later or invite friends to join!</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if users %}
+      <div class="footer">
+        <span>{{ users|length }} user{{ users|length|pluralize }} available</span>
+        <span><div style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%; margin-right:5px;"></div>Online now</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-links">
+      <a href="/"><i class="fa-solid fa-home"></i> Back to Home</a>
+      |
+      <a href="/explore"><i class="fa-solid fa-compass"></i> Explore</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Simple client-side search
+  const searchInput = document.getElementById('searchInput');
+  const userBlocks = document.querySelectorAll('.user-block');
+
+  searchInput.addEventListener('input', function () {
+    const term = this.value.toLowerCase();
+    userBlocks.forEach(block => {
+      const username = block.querySelector('.username').textContent.toLowerCase();
+      block.style.display = username.includes(term) ? 'flex' : 'none';
+    });
+  });
+</script>
+
+</body>
+</html>
