@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-z3)fr5jdij-a(9fkdw$oefelwsosxgsy(r%0dipeq#x@l7!9w(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['social-media-app.onrender.com', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
