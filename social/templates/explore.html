@@ -83,79 +83,36 @@
         </nav>
 
         <!-- Main Content -->
-     <main class="flex-1 ml-64">
+    <main class="flex-1 ml-64">
     {% include "search.html" %}
 
-    <div class="p-8 max-w-3xl mx-auto">
+    <div class="p-8 max-w-7xl mx-auto">
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Explore</h1>
             <p class="text-gray-600">Discover amazing content from the community</p>
         </div>
 
-        {% for pos in post %}
-        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-            <!-- Header -->
-            <div class="flex items-center gap-3 p-4 border-b">
-                <img src="{{ pos.user.profile.profileimg.url }}" alt="Profile Image"
-                     class="w-10 h-10 rounded-full object-cover">
-                <a href="/profile/{{ pos.user }}" class="font-semibold text-gray-800 hover:text-blue-500">
-                    @{{ pos.user }}
-                </a>
-            </div>
+        {% if post %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for pos in post %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden group relative">
 
-            <!-- Post Image -->
-            <img src="{{ pos.image.url }}" alt="Post Image" class="w-full object-cover max-h-[500px]">
+                <!-- Post Image -->
+                <img src="{{ pos.image.url }}" alt="Post Image"
+                     class="w-full h-72 object-cover group-hover:opacity-80 transition duration-300">
 
-            <!-- Post Caption -->
-            <div class="p-4">
-                <p class="text-gray-800 mb-2">{{ pos.caption }}</p>
-
-                <!-- Like and Comment Actions -->
-                <div class="flex justify-between items-center mt-2">
-                    <form method="POST" action="/like-post/{{ pos.id }}/">
-                        {% csrf_token %}
-                        <button type="submit" class="text-red-500 hover:text-red-600 flex items-center gap-1">
-                            <i class="fa fa-heart"></i> Like
-                        </button>
-                    </form>
-                    <a href="#comment-form-{{ pos.id }}" class="text-gray-600 hover:text-gray-800 flex items-center gap-1">
-                        <i class="fa fa-comment"></i> Comment
-                    </a>
+                <!-- Overlay on Hover -->
+                <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-3">
+                    <div class="text-white text-sm font-semibold truncate">@{{ pos.user }}</div>
+                    <p class="text-white text-xs line-clamp-2">{{ pos.caption }}</p>
                 </div>
 
-                <!-- Like Count -->
-                <p class="text-sm text-gray-500 mt-1">
-                    {{ pos.no_of_likes }} like{{ pos.no_of_likes|pluralize }}
-                </p>
-
-                <!-- Comments -->
-                <div class="mt-4 space-y-2">
-                    {% for comment in pos.comments.all %}
-                    <div class="bg-gray-100 p-2 rounded-md text-sm">
-                        <strong>{{ comment.user.username }}</strong>: {{ comment.comment_text }}
-                        <div class="text-xs text-gray-500">{{ comment.created_at }}</div>
-                    </div>
-                    {% empty %}
-                    <p class="text-gray-400 text-sm">No comments yet.</p>
-                    {% endfor %}
-                </div>
-
-                <!-- Comment Form -->
-                <form method="POST" action="/comment/{{ pos.id }}/" class="mt-3" id="comment-form-{{ pos.id }}">
-                    {% csrf_token %}
-                    <div class="flex items-center gap-2">
-                        <input type="text" name="comment_text" placeholder="Add a comment..." required
-                               class="flex-1 border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button type="submit" class="bg-blue-500 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-600">
-                            Post
-                        </button>
-                    </div>
-                </form>
+                <!-- Link to Post or Profile -->
+                <a href="/profile/{{ pos.user }}" class="absolute inset-0 z-10"></a>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-
-        {% if not post %}
+        {% else %}
         <div class="text-center py-16">
             <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="fa-solid fa-images text-2xl text-gray-400"></i>
@@ -166,6 +123,7 @@
         {% endif %}
     </div>
 </main>
+
 
     </div>
 
